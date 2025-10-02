@@ -3,8 +3,36 @@ import { Button } from './components/ui/button';
 import { Eye, Heart, Flame, ChevronRight } from 'lucide-react';
 import { DashedLine, YellowArrows, WavePattern, YellowDots } from './components/DecorativeElements';
 import olyaPhoto from 'figma:asset/dff4c39d98e475a13ed0f9c43d7c7847b7c09a35.png';
+import { useIsMobile } from './components/ui/use-mobile';
+import { useState, useEffect, useRef } from 'react';
 
 export default function App() {
+  const isMobile = useIsMobile();
+  const [showStickyButton, setShowStickyButton] = useState(false);
+  const ctaSectionRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      // Get the position of the CTA section
+      const ctaSection = ctaSectionRef.current;
+      if (!ctaSection) return;
+
+      const ctaSectionTop = ctaSection.getBoundingClientRect().top;
+      const windowHeight = window.innerHeight;
+      
+      // Show button after scrolling 50% of screen height (earlier)
+      // Hide button when reaching the CTA section
+      if (window.scrollY > windowHeight * 0.5 && ctaSectionTop > windowHeight * 0.2) {
+        setShowStickyButton(true);
+      } else {
+        setShowStickyButton(false);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   return (
     <div className="min-h-screen bg-[#121212] text-[#f5f5f5] relative overflow-hidden">
       {/* Background noise/grain effect */}
@@ -166,7 +194,7 @@ export default function App() {
         </section>
 
         {/* What We Do Section */}
-        <section className="py-20 px-6 bg-[#1a1a1a]/30 relative">
+        <section className="py-20 px-6 bg-[#1a1a1a]/30 relative" id="events">
           <DashedLine className="absolute bottom-20 right-20 w-64 h-64 opacity-20 rotate-180" />
           
           <div className="max-w-4xl mx-auto">
@@ -259,7 +287,7 @@ export default function App() {
         </section>
 
         {/* CTA Section - Telegram */}
-        <section className="py-20 px-6">
+        <section className="py-20 px-6" ref={ctaSectionRef}>
           <div className="max-w-4xl mx-auto">
             <div className="bg-[#1a1a1a] border-4 border-[#FFD33D] p-12 md:p-16 relative overflow-hidden">
               <YellowDots count={5} className="absolute top-6 right-6 opacity-40" />
@@ -342,6 +370,31 @@ export default function App() {
           </div>
         </footer>
       </div>
+
+      {/* Sticky button for mobile */}
+      {isMobile && showStickyButton && (
+        <div className="fixed bottom-0 left-0 right-0 z-[9999]">
+          <a 
+            href="https://t.me/metatselnost/308" 
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flash-button block w-full bg-[#FFD33D] text-[#121212] font-display font-bold py-4 text-center hover:bg-[#FFD33D]/90 transition-all whitespace-nowrap"
+          >
+            Анонсы событий
+          </a>
+        </div>
+      )}
+
+      <style jsx>{`
+        @keyframes flash {
+          0% { box-shadow: 0 0 5px #FFD33D, 0 0 10px #FFD33D; }
+          50% { box-shadow: 0 0 20px #FFD33D, 0 0 30px #FFD33D; }
+          100% { box-shadow: 0 0 5px #FFD33D, 0 0 10px #FFD33D; }
+        }
+        .flash-button {
+          animation: flash 2s infinite;
+        }
+      `}</style>
     </div>
   );
 }
