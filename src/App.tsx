@@ -384,7 +384,7 @@ export default function App() {
       {isMobile && showStickyButton && (
         <div className="fixed h-[50px]">
           <a 
-            href="https://t.me/c/metatselnost/308" 
+            href="https://t.me/metatselnost" 
             target="_blank"
             rel="noopener noreferrer"
             className="flash-button block w-full h-full bg-[#FFD33D] text-[#121212] font-display font-bold text-center hover:bg-[#FFD33D]/90 transition-all whitespace-nowrap flex items-center justify-center"
