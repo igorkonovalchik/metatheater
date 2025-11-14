@@ -5,24 +5,30 @@ import { DashedLine, YellowArrows, WavePattern, YellowDots } from './components/
 import olyaPhoto from 'figma:asset/dff4c39d98e475a13ed0f9c43d7c7847b7c09a35.png';
 import { useIsMobile } from './components/ui/use-mobile';
 import { useState, useEffect, useRef } from 'react';
+import InstagramGallery from './components/InstagramGallery';
 
 export default function App() {
   const isMobile = useIsMobile();
   const [showStickyButton, setShowStickyButton] = useState(false);
   const ctaSectionRef = useRef<HTMLDivElement>(null);
+  const footerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleScroll = () => {
-      // Get the position of the CTA section
+      // Get the position of the CTA section and footer
       const ctaSection = ctaSectionRef.current;
-      if (!ctaSection) return;
+      const footer = footerRef.current;
+      if (!ctaSection || !footer) return;
 
       const ctaSectionTop = ctaSection.getBoundingClientRect().top;
+      const ctaSectionBottom = ctaSection.getBoundingClientRect().bottom;
+      const footerTop = footer.getBoundingClientRect().top;
       const windowHeight = window.innerHeight;
       
-      // Show button after scrolling 50% of screen height (earlier)
-      // Hide button when reaching the CTA section
-      if (window.scrollY > windowHeight * 0.5 && ctaSectionTop > windowHeight * 0.2) {
+      // Show button after scrolling past the first screen (100vh)
+      // Hide button when reaching the "Хочешь понять твое ли?" section
+      // Hide button when reaching the footer section
+      if (window.scrollY > windowHeight && ctaSectionTop > windowHeight && footerTop > windowHeight * 0.5) {
         setShowStickyButton(true);
       } else {
         setShowStickyButton(false);
@@ -286,6 +292,9 @@ export default function App() {
           </div>
         </section>
 
+        {/* Instagram Gallery */}
+        <InstagramGallery />
+
         {/* CTA Section - Telegram */}
         <section className="py-20 px-6" ref={ctaSectionRef}>
           <div className="max-w-4xl mx-auto">
@@ -349,7 +358,7 @@ export default function App() {
         </section>
 
         {/* Footer Message */}
-        <footer className="py-20 px-6 border-t border-[#FFD33D]/20">
+        <footer className="py-20 px-6 border-t border-[#FFD33D]/20" ref={footerRef}>
           <div className="max-w-4xl mx-auto text-center space-y-12">
             <p className="font-display text-4xl md:text-6xl text-[#FFD33D] leading-tight">
               Ты не играешь роль.<br />
@@ -373,12 +382,13 @@ export default function App() {
 
       {/* Sticky button for mobile */}
       {isMobile && showStickyButton && (
-        <div className="fixed bottom-0 left-0 right-0 z-[9999]">
+        <div className="fixed h-[50px]">
           <a 
-            href="https://t.me/metatselnost/308" 
+            href="https://t.me/c/metatselnost/308" 
             target="_blank"
             rel="noopener noreferrer"
-            className="flash-button block w-full bg-[#FFD33D] text-[#121212] font-display font-bold py-4 text-center hover:bg-[#FFD33D]/90 transition-all whitespace-nowrap"
+            className="flash-button block w-full h-full bg-[#FFD33D] text-[#121212] font-display font-bold text-center hover:bg-[#FFD33D]/90 transition-all whitespace-nowrap flex items-center justify-center"
+            style={{ zIndex: 99999 }}
           >
             Анонсы событий
           </a>
@@ -393,6 +403,16 @@ export default function App() {
         }
         .flash-button {
           animation: flash 2s infinite;
+          padding: 20px 0;
+        }
+        
+        .fixed {
+          position: fixed;
+          width: 100%;
+          z-index: 99999999;
+          bottom: 0;
+          left: 0;
+          right: 0;
         }
       `}</style>
     </div>
